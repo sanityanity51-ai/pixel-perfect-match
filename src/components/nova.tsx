@@ -3,63 +3,101 @@ import { useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 const NAV = [
-  { to: "/", label: "Home" },
-  { to: "/research", label: "Research" },
-  { to: "/meetings", label: "Meetings" },
-  { to: "/email", label: "Email" },
-  { to: "/settings", label: "Settings" },
-  { to: "/privacy", label: "Privacy" },
+  { to: "/", label: "Home", icon: "🏠" },
+  { to: "/research", label: "Research Assistant", icon: "🔎" },
+  { to: "/meetings", label: "Meeting Summarizer", icon: "📝" },
+  { to: "/email", label: "Email Generator", icon: "✉️" },
+  { to: "/settings", label: "Settings", icon: "⚙️" },
+  { to: "/privacy", label: "Privacy", icon: "🔒" },
 ] as const;
+
+function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
+  return (
+    <ul className="space-y-1">
+      {NAV.map((n) => (
+        <li key={n.to}>
+          <Link
+            to={n.to}
+            onClick={onNavigate}
+            activeOptions={{ exact: true }}
+            className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-muted-foreground transition hover:bg-secondary hover:text-foreground"
+            activeProps={{ className: "bg-secondary !text-primary shadow-sm" }}
+          >
+            <span aria-hidden className="w-5 shrink-0 text-center">{n.icon}</span>
+            <span className="truncate">{n.label}</span>
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+const Brand = () => (
+  <Link to="/" className="flex min-w-0 items-center gap-2">
+    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-primary font-semibold text-primary-foreground shadow-brand">N</span>
+    <span className="font-display text-lg font-bold tracking-tight">NOVA AI</span>
+  </Link>
+);
 
 export function Shell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="relative flex min-h-screen flex-col overflow-hidden bg-background text-foreground">
-      <div aria-hidden className="pointer-events-none absolute inset-0 glow-bg" />
-      <div aria-hidden className="floaty pointer-events-none absolute -top-24 left-1/3 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
-      <div aria-hidden className="floaty pointer-events-none absolute bottom-10 right-16 h-80 w-80 rounded-full bg-glow-2 blur-3xl [animation-delay:-6s]" />
-      <header className="sticky top-4 z-20 mx-auto max-w-6xl px-4 sm:px-6">
-        <nav aria-label="Main" className="glass-strong flex items-center justify-between rounded-2xl px-5 py-3">
-          <Link to="/" className="flex items-center gap-2">
-            <span className="grid h-8 w-8 place-items-center rounded-lg bg-primary font-semibold text-primary-foreground shadow-brand">N</span>
-            <span className="font-display text-lg font-bold tracking-tight">NOVA AI</span>
-          </Link>
-          <div className="hidden items-center gap-6 text-sm font-medium text-muted-foreground md:flex">
-            {NAV.map((n) => (
-              <Link key={n.to} to={n.to} activeOptions={{ exact: true }} className="hover:text-foreground" activeProps={{ className: "text-foreground" }}>
-                {n.label}
-              </Link>
-            ))}
-          </div>
-          <button className="rounded-lg px-3 py-1.5 text-sm font-semibold md:hidden" aria-expanded={open} onClick={() => setOpen(!open)}>
-            Menu
-          </button>
-        </nav>
-        {open && (
-          <div className="glass-strong mt-2 grid rounded-2xl p-2 md:hidden">
-            {NAV.map((n) => (
-              <Link key={n.to} to={n.to} onClick={() => setOpen(false)} className="rounded-lg px-3 py-2 text-sm font-medium hover:bg-accent">
-                {n.label}
-              </Link>
-            ))}
-          </div>
-        )}
+    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
+      <div aria-hidden className="pointer-events-none fixed inset-0 glow-bg" />
+      <div aria-hidden className="floaty pointer-events-none fixed -top-24 left-1/3 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
+      <div aria-hidden className="floaty pointer-events-none fixed bottom-10 right-16 h-80 w-80 rounded-full bg-glow-2 blur-3xl [animation-delay:-6s]" />
+
+      {/* Desktop sidebar */}
+      <aside className="glass-strong fixed inset-y-4 left-4 z-30 hidden w-64 flex-col rounded-3xl p-5 lg:flex">
+        <Brand />
+        <nav aria-label="Main" className="mt-8 flex-1"><NavLinks /></nav>
+        <p className="text-xs leading-relaxed text-muted-foreground">AI can make mistakes. Always review results before using them.</p>
+      </aside>
+
+      {/* Mobile top bar */}
+      <header className="sticky top-3 z-30 mx-3 lg:hidden">
+        <div className="glass-strong flex items-center justify-between rounded-2xl px-4 py-3">
+          <Brand />
+          <button aria-label="Open menu" aria-expanded={open} onClick={() => setOpen(true)} className="rounded-lg bg-brand-soft px-3 py-1.5 text-sm font-semibold text-primary">Menu</button>
+        </div>
       </header>
-      <main className="relative z-10 flex-1">{children}</main>
-      <footer className="relative z-10 border-t py-8 text-center text-sm text-muted-foreground">NOVA AI — clarity, quietly automated.</footer>
+      {open && (
+        <div className="fixed inset-0 z-40 lg:hidden" role="dialog" aria-modal="true">
+          <button aria-label="Close menu" className="absolute inset-0 bg-foreground/20" onClick={() => setOpen(false)} />
+          <aside className="glass-strong absolute inset-y-3 left-3 flex w-72 flex-col rounded-3xl p-5">
+            <div className="flex items-center justify-between">
+              <Brand />
+              <button onClick={() => setOpen(false)} className="text-sm font-semibold text-muted-foreground">Close</button>
+            </div>
+            <nav aria-label="Main" className="mt-8"><NavLinks onNavigate={() => setOpen(false)} /></nav>
+          </aside>
+        </div>
+      )}
+
+      <div className="relative z-10 flex min-h-screen flex-col lg:pl-72">
+        <main className="flex-1">{children}</main>
+        <footer className="border-t py-6 text-center text-sm text-muted-foreground">NOVA AI — clarity, quietly automated.</footer>
+      </div>
     </div>
   );
 }
 
+export const Disclaimer = () => (
+  <aside role="note" className="mt-6 rounded-2xl border bg-brand-soft p-4 text-xs leading-relaxed text-muted-foreground">
+    <span className="font-semibold text-foreground">Responsible AI: </span>
+    Results are AI-generated and may be incomplete or inaccurate. NOVA is instructed not to invent facts, but please verify important information, names and dates before relying on or sending anything. Don't share passwords, banking details or other highly sensitive data.
+  </aside>
+);
+
 export function ToolPage({ eyebrow, title, intro, children }: { eyebrow: string; title: string; intro: string; children: ReactNode }) {
   return (
-    <section className="mx-auto max-w-6xl px-4 pb-24 pt-14 sm:px-6">
-      <div className="glass-strong rounded-3xl p-6 md:p-8">
+    <section className="mx-auto max-w-6xl px-4 pb-16 pt-8 sm:px-6 lg:pt-10">
+      <div className="glass-strong rounded-3xl p-5 md:p-8">
         <p className="text-xs font-semibold uppercase tracking-wider text-primary">{eyebrow}</p>
-        <h1 className="text-3xl font-semibold">{title}</h1>
+        <h1 className="text-2xl font-semibold sm:text-3xl">{title}</h1>
         <p className="mt-2 max-w-2xl text-sm text-muted-foreground">{intro}</p>
-        <p className="mt-3 text-xs text-muted-foreground">Please avoid sharing passwords, banking details or other highly sensitive information.</p>
-        <div className="mt-6 grid gap-6 lg:grid-cols-2">{children}</div>
+        <div className="mt-6 grid gap-6 xl:grid-cols-2">{children}</div>
+        <Disclaimer />
       </div>
     </section>
   );
