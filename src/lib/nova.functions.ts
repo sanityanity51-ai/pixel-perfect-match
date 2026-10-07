@@ -27,7 +27,7 @@ async function safe<T>(fn: () => Promise<T>): Promise<{ ok: true; data: T } | { 
 
 export type ResearchResult = { topic: string; summary: string; facts: string[]; insights: string[]; recommendations: string[] };
 export const runResearch = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ input: z.string().trim().min(3).max(MAX), length: z.enum(["short", "standard", "detailed"]) }).parse(d))
+  .validator((d) => z.object({ input: z.string().trim().min(3).max(MAX), length: z.enum(["short", "standard", "detailed"]) }).parse(d))
   .handler(({ data }) =>
     safe(() =>
       runStructured<ResearchResult>(
@@ -47,7 +47,7 @@ export type MeetingResult = {
   important_dates: { date: string; event: string }[];
 };
 export const runMeeting = createServerFn({ method: "POST" })
-  .inputValidator((d) => z.object({ input: z.string().trim().min(10).max(MAX) }).parse(d))
+  .validator((d) => z.object({ input: z.string().trim().min(10).max(MAX) }).parse(d))
   .handler(({ data }) =>
     safe(() =>
       runStructured<MeetingResult>(
@@ -67,7 +67,7 @@ export const runMeeting = createServerFn({ method: "POST" })
 
 export type EmailResult = { subject: string; body: string };
 export const runEmail = createServerFn({ method: "POST" })
-  .inputValidator((d) =>
+  .validator((d) =>
     z.object({
       recipient: z.string().max(300),
       purpose: z.string().max(1000),

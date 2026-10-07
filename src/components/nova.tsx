@@ -14,7 +14,7 @@ const NAV = [
 export function Shell({ children }: { children: ReactNode }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
+    <div className="relative flex min-h-screen flex-col overflow-hidden bg-background text-foreground">
       <div aria-hidden className="pointer-events-none absolute inset-0 glow-bg" />
       <div aria-hidden className="floaty pointer-events-none absolute -top-24 left-1/3 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
       <div aria-hidden className="floaty pointer-events-none absolute bottom-10 right-16 h-80 w-80 rounded-full bg-glow-2 blur-3xl [animation-delay:-6s]" />
@@ -45,7 +45,7 @@ export function Shell({ children }: { children: ReactNode }) {
           </div>
         )}
       </header>
-      <main className="relative z-10">{children}</main>
+      <main className="relative z-10 flex-1">{children}</main>
       <footer className="relative z-10 border-t py-8 text-center text-sm text-muted-foreground">NOVA AI — clarity, quietly automated.</footer>
     </div>
   );
