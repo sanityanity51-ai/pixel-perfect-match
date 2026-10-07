@@ -22,7 +22,7 @@ const cards = [
 function Index() {
   return (
     <Shell>
-      <section className="mx-auto max-w-6xl px-6 pb-10 pt-20 text-center">
+      <section className="mx-auto max-w-6xl px-6 pb-10 pt-12 text-center lg:pt-20">
         <span className="mx-auto inline-flex items-center gap-2 rounded-full border bg-secondary px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-primary shadow-sm">
           <span className="h-1.5 w-1.5 rounded-full bg-primary" /> Your AI workspace
         </span>
