@@ -123,6 +123,7 @@ export function FileLoader({ onText }: { onText: (t: string) => void }) {
           if (!ALLOWED.some((x) => f.name.toLowerCase().endsWith(x))) return toast.error("Unsupported file type. Please upload a TXT, CSV or MD file.");
           if (f.size > 1024 * 1024) return toast.error("File is too large. Maximum size is 1 MB.");
           onText(await f.text());
+          return undefined;
         }}
       />
       <button type="button" onClick={() => ref.current?.click()} className="text-xs font-semibold text-primary hover:underline">

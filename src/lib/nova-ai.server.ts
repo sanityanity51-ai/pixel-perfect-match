@@ -18,7 +18,7 @@ export async function runStructured<T>(
   schemaName: string,
   schema: Record<string, unknown>,
 ): Promise<T> {
-  const apiKey = process.env.LOVABLE_API_KEY;
+  const apiKey = process.env['LOVABLE_API_KEY'];
   if (!apiKey) throw new NovaError("The AI service is not configured.", 500);
 
   let res: Response;
